@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { NavLink, Link } from "react-router-dom"
-import { Search, Heart, ShoppingCart, Menu, X } from "lucide-react"
+import { Search, Heart, ShoppingCart, Menu, X, User, Package, LogOut } from "lucide-react"
 import img from "../../assets/Group 1116606595 (6).png"
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [accountOpen, setAccountOpen] = useState(false)
 
   const navLinks = [
     { to: "/home", label: "Home" },
@@ -13,10 +14,20 @@ export default function Header() {
     { to: "/", label: "Sign Up" },
   ]
 
+  const accountMenuItems = [
+    { icon: User, label: "Account", to: "/profile" },
+    { icon: Package, label: "My Order", to: "/orders" },
+  ]
+
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `relative text-sm font-medium transition-colors duration-200 hover:text-emerald-600
      after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-emerald-600 after:transition-all after:duration-300
      ${isActive ? "text-gray-900 after:w-full" : "text-gray-700 after:w-0 hover:after:w-full"}`
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    setAccountOpen(false)
+  }
 
   return (
     <header className="w-full border-b border-gray-100 bg-white relative z-50">
@@ -73,12 +84,90 @@ export default function Header() {
           >
             <ShoppingCart size={22} />
           </Link>
+
+          <div className="relative">
+            <div
+              onClick={() => setAccountOpen(true)}
+              className="cursor-pointer text-gray-700 transition-transform duration-200 hover:text-emerald-600 hover:scale-105"
+            >
+              <User size={22} />
+            </div>
+
+            {accountOpen && (
+              <>
+                <div onClick={() => setAccountOpen(false)} className="fixed inset-0 z-40" />
+                <div className="absolute right-0 top-full mt-3 w-44 rounded-2xl bg-gray-900/90 backdrop-blur-xl p-2 shadow-2xl ring-1 ring-white/10 z-50">
+                  {accountMenuItems.map((item) => (
+                    <Link
+                      key={item.label}
+                      to={item.to}
+                      onClick={() => setAccountOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
+                        transition-colors duration-150 hover:bg-white/10"
+                    >
+                      <item.icon size={17} />
+                      {item.label}
+                    </Link>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
+                      transition-colors duration-150 hover:bg-white/10"
+                  >
+                    <LogOut size={17} />
+                    Logout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Mobile cart icon (always visible top-right) */}
-        <Link to="/cart" aria-label="Cart" className="relative text-gray-800 md:hidden">
-          <ShoppingCart size={22} />
-        </Link>
+        {/* Mobile icons (always visible top-right) */}
+        <div className="flex items-center gap-4 md:hidden">
+          <Link to="/cart" aria-label="Cart" className="relative text-gray-800">
+            <ShoppingCart size={22} />
+          </Link>
+
+          <div className="relative">
+            <div
+              onClick={() => setAccountOpen(true)}
+              className="cursor-pointer text-gray-800"
+            >
+              <User size={22} />
+            </div>
+
+            {accountOpen && (
+              <>
+                <div onClick={() => setAccountOpen(false)} className="fixed inset-0 z-40" />
+                <div className="absolute right-0 top-full mt-3 w-44 rounded-2xl bg-gray-900/90 backdrop-blur-xl p-2 shadow-2xl ring-1 ring-white/10 z-50">
+                  {accountMenuItems.map((item) => (
+                    <Link
+                      key={item.label}
+                      to={item.to}
+                      onClick={() => setAccountOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
+                        transition-colors duration-150 hover:bg-white/10"
+                    >
+                      <item.icon size={17} />
+                      {item.label}
+                    </Link>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
+                      transition-colors duration-150 hover:bg-white/10"
+                  >
+                    <LogOut size={17} />
+                    Logout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Mobile fullscreen menu overlay */}
