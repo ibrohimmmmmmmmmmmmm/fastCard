@@ -28,6 +28,8 @@ export default function CreateAccount() {
       console.log("REGISTER RESPONSE:", response);
 
       if (response) {
+        const token = response.data?.data;
+        if (token) localStorage.setItem("access", token);
         navigate("/home");
         reset();
       }

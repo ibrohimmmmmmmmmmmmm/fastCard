@@ -22,6 +22,7 @@ export default function Login() {
       const token = await postLogin(newAccount);
       console.log("TOKEN:", token);
       if (token) {
+        localStorage.setItem("access", token);
         navigate("/home");
         reset();
       }

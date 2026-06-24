@@ -3,17 +3,34 @@ import { axiosRequest } from "../../utils/axios";
 
 export const useHomeStore = create((set) => ({
     products: [],
-    categories: [],
     brands: [],
+    categories: [],
 
     getProducts: async () => {
         try {
-            const response = await axiosRequest.get("/Product/get-products");
-            set({ products: response.data.data });
-            return response.data;
+            const { data } = await axiosRequest.get("/Product/get-products");
+
+            set({
+                products: data.data.products,
+            });
+
+            return data;
         } catch (error) {
-            console.error("HOME ERROR:", error);
-            return null;
+            console.error(error);
+        }
+    },
+
+    getBrands: async () => {
+        try {
+            const { data } = await axiosRequest.get("/Brand/get-brands");
+
+            set({
+                brands: data.data,
+            });
+
+            return data;
+        } catch (error) {
+            console.error(error);
         }
     },
 }));

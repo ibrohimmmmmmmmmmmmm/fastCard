@@ -1,10 +1,14 @@
 import { ChevronRight, ArrowRight } from "lucide-react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Pagination, Autoplay } from "swiper/modules"
+import { useNavigate } from "react-router-dom"
 import "swiper/css"
 import "swiper/css/pagination"
+
 export default function Section1() {
-     const categories = [
+  const navigate = useNavigate();
+
+  const categories = [
     { label: "Woman's Fashion", hasSubmenu: true },
     { label: "Men's Fashion", hasSubmenu: true },
     { label: "Electronics", hasSubmenu: false },
@@ -38,76 +42,77 @@ export default function Section1() {
   ]
   return (
     <>
-<div className="flex gap-8 px-6 py-5 max-w-7xl mx-auto">
-      {/* Sidebar categories */}
-      <div className="hidden lg:block w-64 shrink-0 border-r border-gray-200 pr-6">
-        <ul className="flex flex-col gap-4">
-          {categories.map((cat) => (
-            <li
-              key={cat.label}
-              className="flex items-center justify-between text-sm text-gray-700 cursor-pointer
-                transition-colors duration-200 hover:text-emerald-600"
-            >
-              <span>{cat.label}</span>
-              {cat.hasSubmenu && (
-                <ChevronRight size={16} className="text-gray-400" />
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <div className="flex gap-8 px-6 py-5 max-w-7xl mx-auto">
+        {/* Sidebar categories */}
+        <div className="hidden lg:block w-64 shrink-0 border-r border-gray-200 pr-6">
+          <ul className="flex flex-col gap-4">
+            {categories.map((cat) => (
+              <li
+                key={cat.label}
+                onClick={() => navigate(`/products?category=${encodeURIComponent(cat.label)}`)}
+                className="flex items-center justify-between text-sm text-gray-700 cursor-pointer
+                  transition-colors duration-200 hover:text-red-500"
+              >
+                <span>{cat.label}</span>
+                {cat.hasSubmenu && (
+                  <ChevronRight size={16} className="text-gray-400" />
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      {/* Hero banner carousel */}
-      <div className="flex-1 w-[80%]">
-        <Swiper
-          modules={[Pagination, Autoplay]}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
-          loop
-          className="rounded-lg overflow-hidden [--swiper-pagination-color:#ef4444] [--swiper-pagination-bullet-inactive-color:#6b7280] [--swiper-pagination-bullet-inactive-opacity:0.6]"
-        >
-          {slides.map((slide, i) => (
-            <SwiperSlide key={i}>
-              <div className="relative bg-black h-[280px] md:h-[320px] flex items-center overflow-hidden">
-                <div className="relative z-10 px-8 md:px-14 flex flex-col gap-5">
-                  <div className="flex items-center gap-3">
-                    <span className="text-white text-2xl"></span>
-                    <span className="text-white text-sm">{slide.brand}</span>
+        {/* Hero banner carousel */}
+        <div className="flex-1 w-[80%]">
+          <Swiper
+            modules={[Pagination, Autoplay]}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 4000, disableOnInteraction: false }}
+            loop
+            className="rounded-lg overflow-hidden [--swiper-pagination-color:#ef4444] [--swiper-pagination-bullet-inactive-color:#6b7280] [--swiper-pagination-bullet-inactive-opacity:0.6]"
+          >
+            {slides.map((slide, i) => (
+              <SwiperSlide key={i}>
+                <div className="relative bg-black h-[280px] md:h-[320px] flex items-center overflow-hidden">
+                  <div className="relative z-10 px-8 md:px-14 flex flex-col gap-5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-white text-2xl"></span>
+                      <span className="text-white text-sm">{slide.brand}</span>
+                    </div>
+
+                    <h1 className="text-white text-4xl md:text-5xl font-semibold leading-tight">
+                      {slide.title}
+                      <br />
+                      {slide.titleLine2}
+                    </h1>
+
+                    <a
+                      href="#"
+                      className="group flex items-center gap-2 text-white text-sm font-medium
+                        underline underline-offset-4"
+                    >
+                      Shop Now
+                      <ArrowRight
+                        size={16}
+                        className="transition-transform duration-200 group-hover:translate-x-1"
+                      />
+                    </a>
                   </div>
 
-                  <h1 className="text-white text-4xl md:text-5xl font-semibold leading-tight">
-                    {slide.title}
-                    <br />
-                    {slide.titleLine2}
-                  </h1>
+                  <img
+                    src={slide.image}
+                    alt={slide.brand}
+                    className="absolute right-0 top-0 h-full w-auto object-cover opacity-90 pointer-events-none"
+                  />
 
-                  <a
-                    href="#"
-                    className="group flex items-center gap-2 text-white text-sm font-medium
-                      underline underline-offset-4"
-                  >
-                    Shop Now
-                    <ArrowRight
-                      size={16}
-                      className="transition-transform duration-200 group-hover:translate-x-1"
-                    />
-                  </a>
+                  {/* radial glow behind product */}
+                  <div className="absolute right-10 top-1/2 -translate-y-1/2 h-48 w-48 rounded-full bg-pink-500/30 blur-3xl pointer-events-none" />
                 </div>
-
-                <img
-                  src={slide.image}
-                  alt={slide.brand}
-                  className="absolute right-0 top-0 h-full w-auto object-cover opacity-90 pointer-events-none"
-                />
-
-                {/* radial glow behind product */}
-                <div className="absolute right-10 top-1/2 -translate-y-1/2 h-48 w-48 rounded-full bg-pink-500/30 blur-3xl pointer-events-none" />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
       </div>
-    </div>
-        </>
+    </>
   )
 }

@@ -1,22 +1,27 @@
 import { useState } from "react"
-import { NavLink, Link } from "react-router-dom"
+import { NavLink, Link, useLocation } from "react-router-dom"
 import { Search, Heart, ShoppingCart, Menu, X, User, Package, LogOut } from "lucide-react"
 import img from "../../assets/Group 1116606595 (6).png"
+import { useWishlistStore } from "../../pages/Wishlist/WishlistZustand"
+import { useCartStore } from "../../pages/Cart/CartZustand"
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
+  const { newItemsCount: newWishlistCount } = useWishlistStore()
+  const { newItemsCount: newCartCount } = useCartStore()
+  const location = useLocation()
+  const isLoggedIn = !!localStorage.getItem("access")
 
   const navLinks = [
     { to: "/home", label: "Home" },
     { to: "/contact", label: "Contact" },
     { to: "/about", label: "About" },
-    { to: "/", label: "Sign Up" },
+    ...(isLoggedIn ? [] : [{ to: "/", label: "Sign Up" }]),
   ]
 
   const accountMenuItems = [
     { icon: User, label: "Account", to: "/profile" },
-    { icon: Package, label: "My Order", to: "/orders" },
   ]
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -26,7 +31,10 @@ export default function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem("token")
+    localStorage.removeItem("access")
+    localStorage.removeItem("refresh")
     setAccountOpen(false)
+    window.location.href = "/login"
   }
 
   return (
@@ -69,13 +77,18 @@ export default function Header() {
             <Search size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
           </div>
 
-          <button
-            type="button"
+          <Link
+            to="/wishlist"
             aria-label="Wishlist"
-            className="text-gray-700 transition-colors duration-200 hover:text-emerald-600"
+            className="relative text-gray-700 transition-transform duration-200 hover:text-emerald-600 hover:scale-105"
           >
             <Heart size={22} />
-          </button>
+            {newWishlistCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                {newWishlistCount}
+              </span>
+            )}
+          </Link>
 
           <Link
             to="/cart"
@@ -83,90 +96,117 @@ export default function Header() {
             className="relative text-gray-700 transition-transform duration-200 hover:text-emerald-600 hover:scale-105"
           >
             <ShoppingCart size={22} />
+            {newCartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                {newCartCount}
+              </span>
+            )}
           </Link>
 
-          <div className="relative">
-            <div
-              onClick={() => setAccountOpen(true)}
-              className="cursor-pointer text-gray-700 transition-transform duration-200 hover:text-emerald-600 hover:scale-105"
-            >
-              <User size={22} />
-            </div>
+          {isLoggedIn && (
+            <div className="relative">
+              <div
+                onClick={() => setAccountOpen(true)}
+                className="cursor-pointer text-gray-700 transition-transform duration-200 hover:text-emerald-600 hover:scale-105"
+              >
+                <User size={22} />
+              </div>
 
-            {accountOpen && (
-              <>
-                <div onClick={() => setAccountOpen(false)} className="fixed inset-0 z-40" />
-                <div className="absolute right-0 top-full mt-3 w-44 rounded-2xl bg-gray-900/90 backdrop-blur-xl p-2 shadow-2xl ring-1 ring-white/10 z-50">
-                  {accountMenuItems.map((item) => (
-                    <Link
-                      key={item.label}
-                      to={item.to}
-                      onClick={() => setAccountOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
+              {accountOpen && (
+                <>
+                  <div onClick={() => setAccountOpen(false)} className="fixed inset-0 z-40" />
+                  <div className="absolute right-0 top-full mt-3 w-44 rounded-2xl bg-gray-900/90 backdrop-blur-xl p-2 shadow-2xl ring-1 ring-white/10 z-50">
+                    {accountMenuItems.map((item) => (
+                      <Link
+                        key={item.label}
+                        to={item.to}
+                        onClick={() => setAccountOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
+                          transition-colors duration-150 hover:bg-white/10"
+                      >
+                        <item.icon size={17} />
+                        {item.label}
+                      </Link>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
                         transition-colors duration-150 hover:bg-white/10"
                     >
-                      <item.icon size={17} />
-                      {item.label}
-                    </Link>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
-                      transition-colors duration-150 hover:bg-white/10"
-                  >
-                    <LogOut size={17} />
-                    Logout
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+                      <LogOut size={17} />
+                      Logout
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile icons (always visible top-right) */}
         <div className="flex items-center gap-4 md:hidden">
-          <Link to="/cart" aria-label="Cart" className="relative text-gray-800">
-            <ShoppingCart size={22} />
+          <Link
+            to="/wishlist"
+            aria-label="Wishlist"
+            className="relative text-gray-800"
+          >
+            <Heart size={22} />
+            {newWishlistCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                {newWishlistCount}
+              </span>
+            )}
           </Link>
 
-          <div className="relative">
-            <div
-              onClick={() => setAccountOpen(true)}
-              className="cursor-pointer text-gray-800"
-            >
-              <User size={22} />
-            </div>
+          <Link to="/cart" aria-label="Cart" className="relative text-gray-800">
+            <ShoppingCart size={22} />
+            {newCartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                {newCartCount}
+              </span>
+            )}
+          </Link>
 
-            {accountOpen && (
-              <>
-                <div onClick={() => setAccountOpen(false)} className="fixed inset-0 z-40" />
-                <div className="absolute right-0 top-full mt-3 w-44 rounded-2xl bg-gray-900/90 backdrop-blur-xl p-2 shadow-2xl ring-1 ring-white/10 z-50">
-                  {accountMenuItems.map((item) => (
-                    <Link
-                      key={item.label}
-                      to={item.to}
-                      onClick={() => setAccountOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
+          {isLoggedIn && (
+            <div className="relative">
+              <div
+                onClick={() => setAccountOpen(true)}
+                className="cursor-pointer text-gray-800"
+              >
+                <User size={22} />
+              </div>
+
+              {accountOpen && (
+                <>
+                  <div onClick={() => setAccountOpen(false)} className="fixed inset-0 z-40" />
+                  <div className="absolute right-0 top-full mt-3 w-44 rounded-2xl bg-gray-900/90 backdrop-blur-xl p-2 shadow-2xl ring-1 ring-white/10 z-50">
+                    {accountMenuItems.map((item) => (
+                      <Link
+                        key={item.label}
+                        to={item.to}
+                        onClick={() => setAccountOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
+                          transition-colors duration-150 hover:bg-white/10"
+                      >
+                        <item.icon size={17} />
+                        {item.label}
+                      </Link>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
                         transition-colors duration-150 hover:bg-white/10"
                     >
-                      <item.icon size={17} />
-                      {item.label}
-                    </Link>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-gray-200
-                      transition-colors duration-150 hover:bg-white/10"
-                  >
-                    <LogOut size={17} />
-                    Logout
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+                      <LogOut size={17} />
+                      Logout
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
