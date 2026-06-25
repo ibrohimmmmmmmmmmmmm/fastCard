@@ -9,8 +9,8 @@ export default function Checkout() {
   
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'cash'>('cash');
 
-  const getImageUrl = (img?: string) => {
-    if (!img) return "https://via.placeholder.com/50";
+  const getImageUrl = (img?: any) => {
+    if (!img || typeof img !== 'string') return "https://via.placeholder.com/50";
     if (img.startsWith("http")) return img;
     return `${import.meta.env.VITE_BASE_URL}/images/${img}`;
   };
