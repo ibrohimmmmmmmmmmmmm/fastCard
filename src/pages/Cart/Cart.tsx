@@ -15,7 +15,7 @@ export default function Cart() {
   const getImageUrl = (img?: any) => {
     if (!img) return "https://via.placeholder.com/200";
     if (typeof img === 'object') {
-      img = img.imageName || img.url || img.image || img.name || img.path;
+      img = img.images || img.imageName || img.url || img.image || img.name || img.path;
     }
     if (typeof img !== 'string' || !img) return "https://via.placeholder.com/200";
     if (img.startsWith("http")) return img;
