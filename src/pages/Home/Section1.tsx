@@ -42,7 +42,7 @@ export default function Section1() {
   ]
   return (
     <>
-      <div className="flex gap-8 px-6 py-5 max-w-7xl mx-auto">
+      <div className="flex gap-8 px-6 pt-30 py-5 max-w-7xl mx-auto">
         {/* Sidebar categories */}
         <div className="hidden lg:block w-64 shrink-0 border-r border-gray-200 pr-6">
           <ul className="flex flex-col gap-4">
