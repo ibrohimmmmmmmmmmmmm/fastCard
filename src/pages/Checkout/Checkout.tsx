@@ -10,7 +10,11 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'cash'>('cash');
 
   const getImageUrl = (img?: any) => {
-    if (!img || typeof img !== 'string') return "https://via.placeholder.com/50";
+    if (!img) return "https://via.placeholder.com/50";
+    if (typeof img === 'object') {
+      img = img.images || img.imageName || img.url || img.image || img.name || img.path;
+    }
+    if (typeof img !== 'string' || !img) return "https://via.placeholder.com/50";
     if (img.startsWith("http")) return img;
     return `${import.meta.env.VITE_BASE_URL}/images/${img}`;
   };
