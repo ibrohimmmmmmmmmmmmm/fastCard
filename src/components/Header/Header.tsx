@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { NavLink, Link, useLocation } from "react-router-dom"
 import { Search, Heart, ShoppingCart, Menu, X, User, Package, LogOut } from "lucide-react"
 import img from "../../assets/Group 1116606595 (6).png"
@@ -9,9 +9,28 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
   const { newItemsCount: newWishlistCount } = useWishlistStore()
-  const { newItemsCount: newCartCount } = useCartStore()
+  const { newItemsCount: newCartCount, fetchCart } = useCartStore()
   const location = useLocation()
-  const isLoggedIn = !!localStorage.getItem("access")
+  const token = localStorage.getItem("access")
+  
+  // Hide user icon and treat as logged out on auth pages
+  const isAuthPage = location.pathname === '/' || location.pathname === '/login';
+  const isLoggedIn = !isAuthPage && Boolean(token && token !== "undefined" && token !== "null" && token.trim() !== "");
+
+  useEffect(() => {
+    // If the user lands on auth pages, clear stale tokens
+    if (isAuthPage) {
+      localStorage.removeItem("access");
+      localStorage.removeItem("token");
+      localStorage.removeItem("refresh");
+    }
+  }, [isAuthPage]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchCart();
+    }
+  }, [isLoggedIn, fetchCart]);
 
   const navLinks = [
     { to: "/home", label: "Home" },
