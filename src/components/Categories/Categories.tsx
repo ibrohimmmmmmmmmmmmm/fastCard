@@ -32,7 +32,7 @@ function getCategoryIcon(name: string) {
 }
 
 export default function Categories() {
-  const { getBrands, brands } = useHomeStore();
+  const { getBrands, brands }: any = useHomeStore();
   const [activeId, setActiveId] = useState<number | string | null>(null);
 
   useEffect(() => {

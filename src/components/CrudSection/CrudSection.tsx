@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation } from 'swiper/modules'
 import 'swiper/css'
@@ -7,7 +7,7 @@ import { useHomeStore } from '../../pages/Home/HomeZustand'
 import ProductCard from '../ProductCard/ProductCard'
 
 export default function CrudSection() {
-    const { products, getProducts } = useHomeStore()
+    const { products, getProducts } : any = useHomeStore()
 
     useEffect(() => {
         getProducts()

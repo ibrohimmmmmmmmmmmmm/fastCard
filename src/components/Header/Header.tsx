@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { NavLink, Link, useLocation } from "react-router-dom"
-import { Search, Heart, ShoppingCart, Menu, X, User, Package, LogOut } from "lucide-react"
+import { Search, Heart, ShoppingCart, Menu, X, User, LogOut } from "lucide-react"
 import img from "../../assets/Group 1116606595 (6).png"
 import { useWishlistStore } from "../../pages/Wishlist/WishlistZustand"
 import { useCartStore } from "../../pages/Cart/CartZustand"
