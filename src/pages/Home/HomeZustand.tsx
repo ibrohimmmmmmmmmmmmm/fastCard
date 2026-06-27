@@ -33,4 +33,22 @@ export const useHomeStore = create((set) => ({
             console.error(error);
         }
     },
+
+    getCategories: async () => {
+        try {
+            const response = await axiosRequest.get("/Category/get-categories");
+            let data = response.data;
+            if (typeof data === "string") {
+                try { data = JSON.parse(data); } catch (e) { /* ignore */ }
+            }
+
+            let extracted: any[] = [];
+            if (Array.isArray(data)) extracted = data;
+            else if (Array.isArray(data?.data)) extracted = data.data;
+
+            set({ categories: extracted });
+        } catch (error) {
+            console.error("CATEGORIES ERROR:", error);
+        }
+    },
 }));

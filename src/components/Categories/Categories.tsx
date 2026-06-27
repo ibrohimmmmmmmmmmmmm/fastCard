@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 import {
   Smartphone,
   Monitor,
@@ -36,16 +40,26 @@ export default function Categories() {
   }, []);
 
   return (
-    <div className="w-[80%] m-auto  pb-15 py-10">
+    <div className="w-[80%] m-auto relative pb-15 py-10">
       <style>{`
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .cat-fade-up {
-          opacity: 0;
-          animation: fadeUp 0.6s ease-out forwards;
+        .cat-swiper {
+          padding: 10px 4px 30px;
         }
+        .cat-swiper .swiper-slide {
+          opacity: 0;
+          animation: fadeUp 0.6s ease forwards;
+        }
+        .cat-swiper .swiper-slide:nth-child(1) { animation-delay: 0.05s; }
+        .cat-swiper .swiper-slide:nth-child(2) { animation-delay: 0.1s; }
+        .cat-swiper .swiper-slide:nth-child(3) { animation-delay: 0.15s; }
+        .cat-swiper .swiper-slide:nth-child(4) { animation-delay: 0.2s; }
+        .cat-swiper .swiper-slide:nth-child(5) { animation-delay: 0.25s; }
+        .cat-swiper .swiper-slide:nth-child(n+6) { animation-delay: 0.3s; }
+
         .cat-card {
           position: relative;
           isolation: isolate;
@@ -88,29 +102,82 @@ export default function Categories() {
           transform: translateY(-6px) scale(1.03);
           box-shadow: 0 20px 35px -10px rgba(220, 38, 38, 0.35);
         }
+
+        .cat-nav-btn {
+          position: absolute;
+          top: 42%;
+          z-index: 10;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: #131a2e;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 8px 20px rgba(19, 26, 46, 0.3);
+          transition: transform 0.25s ease, background 0.25s ease;
+        }
+        .cat-nav-btn:hover {
+          transform: translateY(-50%) scale(1.1);
+          background: #1f2a4d;
+        }
+        .cat-nav-btn.swiper-button-disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+        .cat-prev { left: -22px; }
+        .cat-next { right: -22px; }
       `}</style>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-5">
-        {brands.map((brand, i) => {
+      <Swiper
+        modules={[Navigation]}
+        navigation={{
+          prevEl: ".cat-prev",
+          nextEl: ".cat-next",
+        }}
+        spaceBetween={20}
+        slidesPerView={6.2}
+        breakpoints={{
+          0: { slidesPerView: 2.2, spaceBetween: 12 },
+          640: { slidesPerView: 3.2, spaceBetween: 16 },
+          1024: { slidesPerView: 4.2, spaceBetween: 18 },
+          1280: { slidesPerView: 6.2, spaceBetween: 20 },
+        }}
+        className="cat-swiper"
+      >
+        {brands.map((brand) => {
           const Icon = getCategoryIcon(brand.brandName);
           const isActive = activeId === brand.id;
 
           return (
-            <button
-              key={brand.id}
-              onClick={() => setActiveId(brand.id)}
-              style={{ animationDelay: `${i * 70}ms` }}
-              className={`cat-fade-up cat-card ${
-                isActive ? "is-active" : ""
-              } flex flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8`}
-            >
-              <Icon className="cat-icon w-9 h-9 text-slate-800" strokeWidth={1.5} />
-              <p className="cat-label text-sm font-medium text-slate-700">
-                {brand.brandName}
-              </p>
-            </button>
+            <SwiperSlide key={brand.id}>
+              <button
+                onClick={() => setActiveId(brand.id)}
+                className={`cat-card ${
+                  isActive ? "is-active" : ""
+                } flex flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8 w-full`}
+              >
+                <Icon className="cat-icon w-9 h-9 text-slate-800" strokeWidth={1.5} />
+                <p className="cat-label text-sm font-medium text-slate-700">
+                  {brand.brandName}
+                </p>
+              </button>
+            </SwiperSlide>
           );
         })}
+      </Swiper>
+
+      <div className="cat-nav-btn cat-prev">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </div>
+      <div className="cat-nav-btn cat-next">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M9 18l6-6-6-6" />
+        </svg>
       </div>
     </div>
   );
